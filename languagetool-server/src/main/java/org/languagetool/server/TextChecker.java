@@ -37,6 +37,8 @@ import org.languagetool.rules.spelling.morfologik.suggestions_ordering.Suggestio
 import org.languagetool.tools.LtThreadPoolFactory;
 import org.languagetool.tools.Tools;
 import org.slf4j.MDC;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -304,6 +306,16 @@ abstract class TextChecker {
     List<String> dictWords = limits.getPremiumUid() != null ?
       getUserDictWords(limits, dictGroups) : Collections.emptyList();
 
+    if (parameters.containsKey("dictionary")) {
+      try {
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> dictionaryData = mapper.readValue(parameters.get("dictionary"), new TypeReference<List<String>>(){});
+        dictWords.addAll(dictionaryData);
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("'dictionary' should be a JSON array in string format.");
+      }
+    }
     boolean filterDictionaryMatches = "true".equals(parameters.get("filterDictionaryMatches"));
 
     Long textSessionId = null;
