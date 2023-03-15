@@ -48,6 +48,10 @@ public class GermanWordRepeatRule extends WordRepeatRule {
       csToken("Bora")
     ),
     Arrays.asList(
+      csToken("Tuk"),
+      csToken("Tuk")
+    ),
+    Arrays.asList(
       csToken("Miu"),
       csToken("Miu")
     ),
@@ -286,6 +290,12 @@ public class GermanWordRepeatRule extends WordRepeatRule {
     Arrays.asList(
       tokenRegex("^[_]+$"),
       tokenRegex("^[_]+$")
+    ),
+    Arrays.asList(// "Er gab ihr ihr Buch zurück."
+      posRegex("VER:.*[123]:.+|PKT|ADV:INR"),
+      csToken("ihr"),
+      csToken("ihr"),
+      posRegex("SUB.+")
     )
   );
   private final Supplier<List<DisambiguationPatternRule>> antiPatterns;

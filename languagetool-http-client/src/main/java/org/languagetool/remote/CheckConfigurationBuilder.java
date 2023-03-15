@@ -39,6 +39,9 @@ public class CheckConfigurationBuilder {
   private String mode = null;
   private String level = null;
   private List<String> ruleValues = new ArrayList<>();
+  private String textSessionID = null;
+  private String username = null;
+  private String apiKey = null;
 
   /**
    * @param langCode a language code like {@code en} or {@code en-US}
@@ -61,7 +64,7 @@ public class CheckConfigurationBuilder {
       throw new IllegalStateException("You cannot use 'enabledOnly' when you haven't set rule ids to be enabled");
     }
     return new CheckConfiguration(langCode, motherTongueLangCode, autoDetectLanguage, enabledRuleIds, enabledOnly, 
-        disabledRuleIds, mode, level, ruleValues);
+                                  disabledRuleIds, mode, level, ruleValues, textSessionID, username, apiKey);
   }
 
   public CheckConfigurationBuilder setMotherTongueLangCode(String motherTongueLangCode) {
@@ -106,5 +109,20 @@ public class CheckConfigurationBuilder {
     this.ruleValues = Objects.requireNonNull(ruleValues);
     return this;
   }
-  
+
+  public CheckConfigurationBuilder textSessionID(String textSessionID) {
+    this.textSessionID = textSessionID;
+    return this;
+  }
+
+  public CheckConfigurationBuilder username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  public CheckConfigurationBuilder apiKey(String apiKey) {
+    this.apiKey = apiKey;
+    return this;
+  }
+
 }

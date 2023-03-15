@@ -49,12 +49,85 @@ public class EnglishChunkerTest {
     assertThat(readingsList.get(0).getChunkTags().toString(), is("[B-NP-singular]"));
     assertThat(readingsList.get(2).getChunkTags().toString(), is("[I-NP-singular]"));
     assertThat(readingsList.get(4).getChunkTags().toString(), is("[E-NP-singular]"));
-    // "the chunker":
+    // "the bicycle":
     assertThat(readingsList.get(8).getChunkTags().toString(), is("[B-NP-singular]"));
     assertThat(readingsList.get(10).getChunkTags().toString(), is("[E-NP-singular]"));
-    // "is"
+    // "is needed"
     assertThat(readingsList.get(12).getChunkTags().toString(), is("[B-VP]"));
     assertThat(readingsList.get(14).getChunkTags().toString(), is("[I-VP]"));
+  }
+
+  @Test
+  @Ignore("interactive use only")
+  public void testInteractive() {
+    EnglishChunker chunker = new EnglishChunker();
+    //String sentence = "Yankee batters hit the ball well enough to win their first World Series since 2000.";
+    // VPs                              ^^^                      ^^^^^
+    //String sentence = "Mary saw the man through the window.";
+    // VPs                    ^^^
+    // String sentence = "David gave Mary a book.";
+    // VPs                      ^^^^
+    //String sentence = "John has finished the work.";
+    // VPs                    ^^^^^^^^^^^^
+    //String sentence = "They do not want to try that.";
+    // VPs                    ^^^^^^^^^^^^^^^^^
+    //String sentence = "He wants to win.";
+    // VPs                  ^^^^^^^^
+    String sentence = "A short test of the bicycle is needed";
+    // VPs                                         ^^^^^^^^^
+    List<AnalyzedTokenReadings> readingsList = createReadingsList(sentence);
+    chunker.addChunkTags(readingsList);
+    for (AnalyzedTokenReadings atr : readingsList) {
+      System.out.println(atr.getToken() + " " + atr.getChunkTags());
+    }
+  }
+
+  @Test
+  @Ignore("interactive use only")
+  public void testInteractive2() throws Exception {
+    EnglishChunker chunker = new EnglishChunker();
+    JLanguageTool lt = new JLanguageTool(new English());
+    //String text = "The aircraft maintenance manager is here.";
+    //String text = "The aircraft manager is here.";
+    String text = "It shows how numbers can be stored";
+    List<AnalyzedSentence> sentences = lt.analyzeText(text);
+    List<AnalyzedTokenReadings> readingsList = Arrays.asList(sentences.get(0).getTokens());
+    chunker.addChunkTags(readingsList);
+    for (AnalyzedTokenReadings atr : readingsList) {
+      System.out.println(atr.getToken() + " " + atr.getChunkTags());
+    }
+  }
+
+  @Test
+  public void testSingularNounAtEndOfNounPhrase() throws Exception {
+    JLanguageTool lt = new JLanguageTool(new English());
+
+    List<AnalyzedTokenReadings> res1 = Arrays.asList(lt.analyzeText("The aircraft manager is here.").get(0).getTokens());
+    assertThat(res1.get(1).getChunkTags().toString(), is("[B-NP-singular]"));
+    assertThat(res1.get(3).getChunkTags().toString(), is("[I-NP-singular]"));
+    assertThat(res1.get(5).getChunkTags().toString(), is("[E-NP-singular]"));
+
+    List<AnalyzedTokenReadings> res2 = Arrays.asList(lt.analyzeText("The aircraft maintenance manager is here.").get(0).getTokens());
+    assertThat(res2.get(1).getChunkTags().toString(), is("[B-NP-singular]"));
+    assertThat(res2.get(3).getChunkTags().toString(), is("[I-NP-singular]"));
+    assertThat(res2.get(5).getChunkTags().toString(), is("[I-NP-singular]"));
+    assertThat(res2.get(7).getChunkTags().toString(), is("[E-NP-singular]"));
+
+    List<AnalyzedTokenReadings> res3 = Arrays.asList(lt.analyzeText("Does your box converter operate correctly?").get(0).getTokens());
+    assertThat(res3.get(3).getChunkTags().toString(), is("[B-NP-singular]"));
+    assertThat(res3.get(5).getChunkTags().toString(), is("[I-NP-singular]"));
+    assertThat(res3.get(7).getChunkTags().toString(), is("[E-NP-singular]"));
+
+    // Not detected as singular yet. Same for: "The shiny new aircraft was on the runway."
+    //List<AnalyzedTokenReadings> res4 = Arrays.asList(lt.analyzeText("The happy sheep is grazing in the field.").get(0).getTokens());
+    //assertThat(res4.get(3).getChunkTags().toString(), is("[B-NP-singular]"));
+    //assertThat(res4.get(5).getChunkTags().toString(), is("[I-NP-singular]"));
+    //assertThat(res4.get(7).getChunkTags().toString(), is("[E-NP-singular]"));
+
+    List<AnalyzedTokenReadings> res5 = Arrays.asList(lt.analyzeText("I’d like a fish pie.").get(0).getTokens());
+    assertThat(res5.get(6).getChunkTags().toString(), is("[B-NP-singular]"));
+    assertThat(res5.get(8).getChunkTags().toString(), is("[I-NP-singular]"));
+    assertThat(res5.get(10).getChunkTags().toString(), is("[E-NP-singular]"));
   }
 
   @Test

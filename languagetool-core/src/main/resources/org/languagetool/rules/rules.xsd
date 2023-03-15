@@ -30,7 +30,7 @@
 
 	<xs:element name="rules">
 		<xs:complexType>
-			<xs:choice minOccurs="1" maxOccurs="unbounded" >
+			<xs:choice minOccurs="0" maxOccurs="unbounded" >
 				<xs:element ref="unification" />
 				<xs:element ref="phrases"/>
 				<xs:element ref="category"/>
@@ -85,6 +85,10 @@
 		                        <xs:enumeration value="clarity" />
 		                        <xs:enumeration value="professional" />
 		                        <xs:enumeration value="creative" />
+								<xs:enumeration value="customer" />
+								<xs:enumeration value="jobapp" />
+								<xs:enumeration value="objective" />
+								<xs:enumeration value="elegant" />
 		                    </xs:restriction>
 		                </xs:simpleType>
 		            </xs:list>
@@ -130,6 +134,10 @@
 			                    <xs:enumeration value="clarity" />
 			                    <xs:enumeration value="professional" />
 			                    <xs:enumeration value="creative" />
+								<xs:enumeration value="customer" />
+								<xs:enumeration value="jobapp" />
+								<xs:enumeration value="objective" />
+								<xs:enumeration value="elegant" />
 			                </xs:restriction>
 			            </xs:simpleType>
 			        </xs:list>
@@ -298,6 +306,7 @@
 				<xs:element ref="and" />
 				<xs:element ref="unify" />
 				<xs:element ref="marker" />
+				<xs:element ref="example" minOccurs="0" maxOccurs="unbounded" /><!-- we don't require that, but this element should appear at the end -->
 			</xs:choice>
 			<xs:attribute name="case_sensitive" type="binaryYesNo" />
 		</xs:complexType>

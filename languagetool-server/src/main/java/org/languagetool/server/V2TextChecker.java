@@ -102,14 +102,15 @@ class V2TextChecker extends TextChecker {
   protected DetectedLanguage getLanguage(String text, Map<String, String> parameters, List<String> preferredVariants,
                                          List<String> noopLangs, List<String> preferredLangs, boolean testMode) {
     String langParam = parameters.get("language");
-    DetectedLanguage detectedLang = detectLanguageOfString(text, null, preferredVariants, noopLangs, preferredLangs, testMode);
+    DetectedLanguage detectedLang = detectLanguageOfString(text, null, preferredVariants, noopLangs, preferredLangs);
     Language givenLang;
     if (getLanguageAutoDetect(parameters)) {
       givenLang = detectedLang.getDetectedLanguage();
     } else {
       givenLang = parseLanguage(langParam);
     }
-    return new DetectedLanguage(givenLang, detectedLang.getDetectedLanguage(), detectedLang.getDetectionConfidence());
+    return new DetectedLanguage(givenLang, detectedLang.getDetectedLanguage(), detectedLang.getDetectionConfidence(),
+      detectedLang.getDetectionSource());
   }
 
   @Override

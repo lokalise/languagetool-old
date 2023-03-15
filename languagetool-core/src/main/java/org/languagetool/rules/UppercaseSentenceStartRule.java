@@ -19,6 +19,7 @@
 package org.languagetool.rules;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -42,8 +43,11 @@ public class UppercaseSentenceStartRule extends TextLevelRule {
   private static final Pattern WHITESPACE_OR_QUOTE = Pattern.compile("[ \"'„«»‘’“”\\n]"); //only ending quote is necessary?
   private static final Pattern SENTENCE_END1 = Pattern.compile("[.?!…]|");
   private static final Set<String> EXCEPTIONS = new HashSet<>(Arrays.asList(
+          "n", // n/a
+          "w", // w/o
           "x86",
           "ⓒ",
+          "ø", // used as bullet point
           "cc" // cc @daniel => "Cc @daniel" is strange
   ));
 
@@ -51,12 +55,21 @@ public class UppercaseSentenceStartRule extends TextLevelRule {
 
   /** @since 3.3 */
   public UppercaseSentenceStartRule(ResourceBundle messages, Language language, IncorrectExample incorrectExample, CorrectExample correctExample) {
+    this(messages, language, incorrectExample, correctExample, null);
+  }
+
+  /** @since 5.9 */
+  public UppercaseSentenceStartRule(ResourceBundle messages, Language language, IncorrectExample incorrectExample, CorrectExample correctExample,
+                                    URL url) {
     super(messages);
     super.setCategory(Categories.CASING.getCategory(messages));
     this.language = language;
     setLocQualityIssueType(ITSIssueType.Typographical);
     if (incorrectExample != null && correctExample != null) {
       addExamplePair(incorrectExample, correctExample);
+    }
+    if (url != null) {
+      setUrl(url);
     }
   }
 
@@ -75,6 +88,10 @@ public class UppercaseSentenceStartRule extends TextLevelRule {
   @Override
   public final String getDescription() {
     return messages.getString("desc_uppercase_sentence");
+  }
+
+  protected boolean isException(AnalyzedTokenReadings[] tokens, int tokenIdx) {
+    return false;
   }
 
   @Override
@@ -108,6 +125,9 @@ public class UppercaseSentenceStartRule extends TextLevelRule {
         thirdToken = firstDutchToken;
         matchTokenPos = 3;
       }
+
+      if( isException(tokens, matchTokenPos) )
+        return toRuleMatchArray(ruleMatches);
 
       String checkToken = firstToken;
       if (thirdToken != null) {

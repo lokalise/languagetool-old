@@ -51,7 +51,9 @@ public class GermanSRXSentenceTokenizerTest {
     testSplit("Hallo, ich bin’s. ", "Könntest du kommen?");
     testSplit("In der 1. Bundesliga kam es zum Eklat.");
     testSplit("Dies ist, z. B., ein Satz."); 
+    testSplit("Da hatte es über 30 °C. ", "Hier kommt der nächste Satz.");
 
+    testSplit("Das 1. Internationale Filmfestival findet nächste Woche statt.");
     testSplit("Friedrich I., auch bekannt als Friedrich der Große.");
     testSplit("Friedrich II., auch bekannt als Friedrich der Große.");
     testSplit("Friedrich IIXC., auch bekannt als Friedrich der Große.");
@@ -108,8 +110,10 @@ public class GermanSRXSentenceTokenizerTest {
     testSplit("Stimme am lautesten heraustönte …. ", "Sobald er auf der Straße war");
 //    testSplit(new String[] { "Aber nein doch, er hörte alles nur zu deutlich! ", "\n", "… ", "›Also, wenn's so ist" });
     testSplit("»Welche Wohnung?\" ", "»Die, wo wir arbeiten.");
-    testSplit("»Nun also, wie ist's?« ", "fragte Lushin und blickte sie fest an.");
-    testSplit("»Nun also, wie ist es?« ", "fragte Lushin und blickte sie fest an.");
+    testSplit("»Nun also, wie ist's?« fragte Lushin und blickte sie fest an.");
+    testSplit("»Nun also, wie ist es?« fragte Lushin und blickte sie fest an.");
+    testSplit("„Nun also, wie ist es?“ fragte Lushin und blickte sie fest an.");
+    testSplit("»Nun also, wie ist es?« ", "Dann ging er.");
 //    testSplit(new String[] { "gezeigt hat.« ", "… ", "Hm! " });
 
     testSplit("Dies ist ein Satz mit einer EMail.Addresse@example.com!");

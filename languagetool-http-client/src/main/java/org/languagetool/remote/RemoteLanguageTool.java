@@ -18,8 +18,6 @@
  */
 package org.languagetool.remote;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.xml.stream.XMLStreamException;
@@ -101,6 +99,15 @@ public class RemoteLanguageTool {
     }
     if (config.getRuleValues().size() > 0) {
       append(params, "ruleValues", String.join(",", config.getRuleValues()));
+    }
+    if (config.getTextSessionID() != null) {
+      append(params, "textSessionId", config.getTextSessionID());
+    }
+    if (config.getUsername() != null) {
+      append(params, "username", config.getUsername());
+    }
+    if (config.getAPIKey() != null) {
+      append(params, "apiKey", config.getAPIKey());
     }
     append(params, "useragent", "java-http-client");
     return params.toString();
@@ -266,7 +273,22 @@ public class RemoteLanguageTool {
       RemoteRuleMatch remoteMatch = getMatch((Map<String, Object>)match);
       result.add(remoteMatch);
     }
-    return new RemoteResult(language, languageCode, languageDetectedCode, languageDetectedName, result, remoteServer);
+    List ignoreRanges = (ArrayList) map.get("ignoreRanges");
+    List<RemoteIgnoreRange> remoteIgnoreRanges = new ArrayList<>();
+    if (ignoreRanges != null) {
+      for (Object range : ignoreRanges) {
+      RemoteIgnoreRange remoteIgnoreRange = getIgnoreRange((Map<String, Object>)range);
+      remoteIgnoreRanges.add(remoteIgnoreRange);
+      }
+    }
+    return new RemoteResult(language, languageCode, languageDetectedCode, languageDetectedName, result, remoteIgnoreRanges, remoteServer);
+  }
+  
+  private RemoteIgnoreRange getIgnoreRange(Map<String, Object> range ) {
+    int from = (int) range.get("from");
+    int to = (int) range.get("to");
+    String langCode = (String) ((Map<String, Object>) range.get("language")).get("code");
+    return new RemoteIgnoreRange(from, to, langCode);
   }
 
   private RemoteRuleMatch getMatch(Map<String, Object> match) {

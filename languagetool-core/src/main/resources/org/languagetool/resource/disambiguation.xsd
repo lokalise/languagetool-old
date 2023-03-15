@@ -64,14 +64,6 @@
 				<xs:element ref="disambig" />
 				<xs:element ref="example" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
-			<xs:attribute name="default" use="optional">
-				<xs:simpleType>
-					<xs:restriction base="xs:NMTOKEN">
-						<xs:enumeration value="off" />
-						<xs:enumeration value="on" />
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:attribute>
 			<xs:attribute name="name" type="xs:string" use="optional" />
 			<xs:attribute name="id" type="xs:ID" use="optional" />
 		</xs:complexType>
@@ -101,11 +93,12 @@
 		<xs:complexType>
 			<xs:choice minOccurs="1" maxOccurs="unbounded">
 				<xs:element ref="token" />
-				<!-- commented out, as these are not tested:
+				<!-- commented out: no rule uses this
 				<xs:element ref="and" />
+				-->
+				<!-- it was commented out but unify & marker seem to work just fine: -->
 				<xs:element ref="unify" />
 				<xs:element ref="marker" />
-				-->
 			</xs:choice>
 			<xs:attribute name="case_sensitive" type="binaryYesNo" use="optional" />
 		</xs:complexType>

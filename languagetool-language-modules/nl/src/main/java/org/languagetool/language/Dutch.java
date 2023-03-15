@@ -73,7 +73,7 @@ public class Dutch extends Language {
   @Nullable
   @Override
   public Synthesizer createDefaultSynthesizer() {
-    return new DutchSynthesizer(this);
+    return DutchSynthesizer.INSTANCE;
   }
 
   @Override
@@ -176,11 +176,13 @@ public class Dutch extends Language {
   @Override
   protected int getPriorityForId(String id) {
     if (id.startsWith(SimpleReplaceRule.DUTCH_SIMPLE_REPLACE_RULE)) {
-    return -2;
+      return -2;
     }
     switch (id) {
       case LongSentenceRule.RULE_ID: return -1;
       // default : 0
+      case "STAM_ZONDER_IK": return -1;  // sse https://github.com/languagetool-org/languagetool/issues/7644
+      case "KOMMA_ONTBR": return -1;   // see https://github.com/languagetool-org/languagetool/issues/7644
       case "KORT_1": return -5;
       case "KORT_2": return -5;  //so that spelling errors are recognized first
       case "EINDE_ZIN_ONVERWACHT": return -5;  //so that spelling errors are recognized first
@@ -188,6 +190,12 @@ public class Dutch extends Language {
       case "DE_ONVERWACHT": return -20;  // below spell checker and simple replace rule
       case "TE-VREEMD": return -20;  // below spell checker and simple replace rule
       // category style : -50
+    }
+    if (id.startsWith("AI_NL_HYDRA_LEO")) { // prefer more specific rules (also speller)
+      if (id.startsWith("AI_NL_HYDRA_LEO_MISSING_COMMA")) {
+        return -51; // prefer comma style rules.
+      }
+      return -5;
     }
     return super.getPriorityForId(id);
   }
@@ -203,7 +211,7 @@ public class Dutch extends Language {
   
   @Override
   public SpellingCheckRule createDefaultSpellingRule(ResourceBundle messages) throws IOException {
-      return new MorfologikDutchSpellerRule(messages, this, null, Collections.emptyList());
+    return new MorfologikDutchSpellerRule(messages, this, null, Collections.emptyList());
   }
 
 }

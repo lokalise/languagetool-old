@@ -28,6 +28,8 @@ import org.languagetool.rules.spelling.morfologik.MorfologikSpeller;
 import org.languagetool.tagging.disambiguation.rules.DisambiguationPatternRule;
 import org.languagetool.tools.StringTools;
 import org.languagetool.tools.Tools;
+
+import static org.languagetool.rules.patterns.PatternRuleBuilderHelper.posRegex;
 import static org.languagetool.rules.patterns.PatternRuleBuilderHelper.tokenRegex;
 
 import java.io.IOException;
@@ -61,6 +63,29 @@ public class CompoundInfinitivRule extends Rule {
       token("sicher"),
       token("zu")
     ),
+    Arrays.asList(  // "Der diensthabende Kollege hatte ganz schön zu tun."
+      token("ganz"),
+      token("schön"),
+      token("zu")
+    ),
+    Arrays.asList(  // "Fang dort an zu lesen, wo du aufgehört hast."
+      tokenRegex("fang|fängst|fängt|fangt|fangen|fing|fingen"),
+      posRegex("ADV.*"),
+      token("an"),
+      token("zu")
+    ),
+    Arrays.asList(  // "Hab keine Lust, mir Gedanken darüber zu machen."
+      token("Gedanken"),
+      tokenRegex("dazu|darüber"),
+      token("zu"),
+      token("machen")
+    ),
+    Arrays.asList(  // "um dort die Nacht über zu stehen."
+      tokenRegex("Spiel|Tag|Nacht|Morgen|Nachmittag|Abend|Zeit|.+zeit"),
+      token("über"),
+      token("zu"),
+      token("stehen")
+    ),
     Arrays.asList(
       token("kurz"),
       token("zu"),
@@ -76,6 +101,36 @@ public class CompoundInfinitivRule extends Rule {
       // "Er hatte nichts weiter zu sagen"
       tokenRegex("deutlich|viel|Stück|nichts|nix|noch"),
       token("weiter"),
+      token("zu")
+    ),
+    Arrays.asList(
+      // "Auf und ab zu schreiten"
+      token("auf"),
+      tokenRegex("und|&|oder|\\/"),
+      new PatternTokenBuilder().posRegex("ADV.*").min(0).build(),
+      token("ab"),
+      token("zu")
+    ),
+    Arrays.asList(
+      // "Hin und her zu laufen"
+      token("hin"),
+      tokenRegex("und|&|oder|\\/"),
+      new PatternTokenBuilder().posRegex("ADV.*").min(0).build(),
+      token("her"),
+      token("zu")
+    ),
+    Arrays.asList(
+      // "Hoch und runter zu laufen"
+      tokenRegex("rauf|hoch"),
+      tokenRegex("und|&|oder|\\/"),
+      new PatternTokenBuilder().posRegex("ADV.*").min(0).build(),
+      token("runter"),
+      token("zu")
+    ),
+    Arrays.asList(
+      // Sie scheint aus Spanien heraus zu kaufen
+      new PatternTokenBuilder().token("aus").setSkip(3).build(),
+      token("heraus"),
       token("zu")
     )
   );
@@ -110,7 +165,7 @@ public class CompoundInfinitivRule extends Rule {
     } else {
       linguServices = null;
     }
-    setUrl(Tools.getUrl("https://www.duden.de/sprachwissen/sprachratgeber/Infinitiv-mit-zu"));
+    setUrl(Tools.getUrl("https://languagetool.org/insights/de/beitrag/zu-zusammen-oder-getrennt/"));
     antiPatterns = cacheAntiPatterns(lang, ANTI_PATTERNS);
   }
 

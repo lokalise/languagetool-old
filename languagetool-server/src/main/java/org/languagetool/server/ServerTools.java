@@ -22,6 +22,8 @@ import com.sun.net.httpserver.HttpExchange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.languagetool.JLanguageTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
@@ -37,6 +39,7 @@ import java.util.regex.Pattern;
 final class ServerTools {
 
   private final static Pattern sentContentPattern = Pattern.compile("<sentcontent>.*</sentcontent>", Pattern.DOTALL);
+  private static final Logger logger = LoggerFactory.getLogger(ServerTools.class);
 
   private ServerTools() {
   }
@@ -133,9 +136,7 @@ final class ServerTools {
   }
 
   static UserLimits getUserLimits(Map<String, String> params, HTTPServerConfig config) {
-    if (params.get("token") != null) {
-      return UserLimits.getLimitsFromToken(config, params.get("token"));
-    } else if (params.get("username") != null) {
+    if (params.get("username") != null) {
       if (params.get("apiKey") != null && params.get("password") != null) {
         throw new BadRequestException("apiKey AND password was set, set only apiKey");
       }
@@ -209,6 +210,14 @@ final class ServerTools {
         level = JLanguageTool.Level.PROFESSIONAL;
       } else if ("creative".equals(param)) {
         level = JLanguageTool.Level.CREATIVE;
+      } else if ("customer".equals(param)) {
+        level = JLanguageTool.Level.CUSTOMER;
+      } else if ("jobapp".equals(param)) {
+        level = JLanguageTool.Level.JOBAPP;
+      } else if ("objective".equals(param)) {
+        level = JLanguageTool.Level.OBJECTIVE;
+      } else if ("elegant".equals(param)) {
+        level = JLanguageTool.Level.ELEGANT;
       } else {
         throw new BadRequestException("If 'level' is set, it must be set to 'default' or 'picky'");
       }

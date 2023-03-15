@@ -66,6 +66,7 @@ public final class StringTools {
   public static final Set<String> UPPERCASE_GREEK_LETTERS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("Α","Β","Γ","Δ","Ε","Ζ","Η","Θ","Ι","Κ","Λ","Μ","Ν","Ξ","Ο","Π","Ρ","Σ","Τ","Υ","Φ","Χ","Ψ","Ω")));
   public static final Set<String> LOWERCASE_GREEK_LETTERS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("α","β","γ","δ","ε","ζ","η","θ","ι","κ","λ","μ","ν","ξ","ο","π","ρ","σ","τ","υ","φ","χ","ψ","ω")));
   private static final Pattern PUNCTUATION_PATTERN = Pattern.compile("[\\p{IsPunctuation}']", Pattern.DOTALL);
+  private static final Pattern NOT_WORD_CHARACTER = Pattern.compile("[^\\p{L}]", Pattern.DOTALL);
 
   private StringTools() {
     // only static stuff
@@ -495,6 +496,32 @@ public final class StringTools {
   public static String normalizeNFKC(String str) {
     return Normalizer.normalize(str, Normalizer.Form.NFKC);
   }
+  
+  public static String normalizeNFC(String str) {
+    return Normalizer.normalize(str, Normalizer.Form.NFC);
+  }
+  
+  /**
+   * Apply to inputString the casing of modelString
+   * @param inputString, modelString 
+   * @return string
+   */
+  public static String preserveCase(String inputString, String modelString) {
+    if (modelString.isEmpty()) {
+      return inputString; 
+    }
+    if (isAllUppercase(modelString)) {
+      return inputString.toUpperCase(); 
+    }
+    if (isCapitalizedWord(modelString)) {
+      return uppercaseFirstChar(inputString.toLowerCase()); 
+    }
+//    if (!isNotAllLowercase(modelString)) {
+//      return inputString.toLowerCase();
+//    }
+    return inputString;
+    
+  }
 
   @Nullable
   public static String asString(CharSequence s) {
@@ -523,7 +550,7 @@ public final class StringTools {
    * Loads file, ignoring comments (lines starting with {@code #}).
    * @param path path in resource dir
    * @since 4.6
-   * @deprecated use DataBroker#getFromResourceDirAsLines(java.lang.String) instead
+   * @deprecated use DataBroker#getFromResourceDirAsLines(java.lang.String) instead (NOTE: it won't handle comments)
    */
   public static List<String> loadLines(String path) {
     InputStream stream = JLanguageTool.getDataBroker().getFromResourceDirAsStream(path);
@@ -568,5 +595,69 @@ public final class StringTools {
    */
   public static boolean isPunctuationMark(String input) {
     return PUNCTUATION_PATTERN.matcher(input).matches();
+  }
+  
+  /**
+   * Whether the string is a punctuation mark
+   * @since 6.1
+   */
+  public static boolean isNotWordCharacter(String input) {
+    return NOT_WORD_CHARACTER.matcher(input).matches();
+  }
+  
+  /*
+   * Invent a wrong word to find possible replacements. 
+   */
+  
+  public static String makeWrong(String s) {
+    if (s.contains("a")) {
+      return s.replace("a", "ä");
+    }
+    if (s.contains("e")) {
+      return s.replace("e", "ë");
+    }
+    if (s.contains("i")) {
+      return s.replace("i", "ï");
+    }
+    if (s.contains("o")) {
+      return s.replace("o", "ö");
+    }
+    if (s.contains("u")) {
+      return s.replace("u", "ù");
+    }
+    if (s.contains("á")) {
+      return s.replace("á", "ä");
+    }
+    if (s.contains("é")) {
+      return s.replace("é", "ë");
+    }
+    if (s.contains("í")) {
+      return s.replace("í", "ï");
+    }
+    if (s.contains("ó")) {
+      return s.replace("ó", "ö");
+    }
+    if (s.contains("ú")) {
+      return s.replace("ú", "ù");
+    }
+    if (s.contains("à")) {
+      return s.replace("à", "ä");
+    }
+    if (s.contains("è")) {
+      return s.replace("è", "ë");
+    }
+    if (s.contains("ì")) {
+      return s.replace("ì", "i");
+    }
+    if (s.contains("ò")) {
+      return s.replace("ò", "ö");
+    }
+    if (s.contains("ï")) {
+      return s.replace("ï", "ì");
+    }
+    if (s.contains("ü")) {
+      return s.replace("ü", "ù");
+    }
+    return s + "-";
   }
 }

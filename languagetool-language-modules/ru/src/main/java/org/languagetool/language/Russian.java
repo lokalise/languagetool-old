@@ -26,14 +26,17 @@ import org.languagetool.chunking.RussianChunker;
 import org.languagetool.languagemodel.LanguageModel;
 import org.languagetool.rules.*;
 import org.languagetool.rules.ru.*;
+import org.languagetool.rules.spelling.SpellingCheckRule;
 import org.languagetool.synthesis.Synthesizer;
 import org.languagetool.synthesis.ru.RussianSynthesizer;
 import org.languagetool.tagging.Tagger;
 import org.languagetool.tagging.disambiguation.Disambiguator;
 import org.languagetool.tagging.disambiguation.ru.RussianHybridDisambiguator;
 import org.languagetool.tagging.ru.RussianTagger;
+import org.languagetool.tokenizers.ru.RussianWordTokenizer;
 import org.languagetool.tokenizers.SRXSentenceTokenizer;
 import org.languagetool.tokenizers.SentenceTokenizer;
+import org.languagetool.tokenizers.Tokenizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,12 +89,17 @@ public class Russian extends Language implements AutoCloseable {
   @Nullable
   @Override
   public Synthesizer createDefaultSynthesizer() {
-    return new RussianSynthesizer(this);
+    return RussianSynthesizer.INSTANCE;
   }
 
   @Override
   public SentenceTokenizer createDefaultSentenceTokenizer() {
     return new SRXSentenceTokenizer(this);
+  }
+
+  @Override
+  public Tokenizer createDefaultWordTokenizer() {
+    return new RussianWordTokenizer();
   }
 
   @Override
@@ -137,12 +145,12 @@ public class Russian extends Language implements AutoCloseable {
             new CommaWhitespaceRule(messages,
                     Example.wrong("Не род<marker> ,</marker> а ум поставлю в воеводы."),
                     Example.fixed("Не род<marker>,</marker> а ум поставлю в воеводы.")),
-            new DoublePunctuationRule(messages),
+        //  new DoublePunctuationRule(messages),  // replace to xml rule
             new UppercaseSentenceStartRule(messages, this,
                     Example.wrong("Закончилось лето. <marker>дети</marker> снова сели за школьные парты."),
                     Example.fixed("Закончилось лето. <marker>Дети</marker> снова сели за школьные парты.")),
             new MorfologikRussianSpellerRule(messages, this, userConfig, altLanguages),
-            new WordRepeatRule(messages, this),
+        //  new WordRepeatRule(messages, this), // move to RussianSimpleWordRepeatRule
             new MultipleWhitespaceRule(messages, this),
 	    new SentenceWhitespaceRule(messages),
             new WhiteSpaceBeforeParagraphEnd(messages, this),  
@@ -163,6 +171,7 @@ public class Russian extends Language implements AutoCloseable {
             new RussianUnpairedBracketsRule(messages, this),
             new RussianCompoundRule(messages, this, userConfig),
             new RussianSimpleReplaceRule(messages),
+            new RussianSimpleWordRepeatRule(messages, this),
             new RussianWordCoherencyRule(messages),
             new RussianWordRepeatRule(messages),
             new RussianWordRootRepeatRule(messages),
@@ -222,4 +231,9 @@ public class Russian extends Language implements AutoCloseable {
     return super.getPriorityForId(id);
   }
 
+  @Nullable
+  @Override
+  protected SpellingCheckRule createDefaultSpellingRule(ResourceBundle messages) throws IOException {
+    return new MorfologikRussianSpellerRule(messages, this, null, null);
+  }
 }
