@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre-alpine
 
 RUN apk update \
     && apk add \
@@ -6,7 +6,7 @@ RUN apk update \
         libgomp \
         gcompat
 
-ARG LANGUAGETOOL_VERSION
+ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 
 RUN mkdir /languagetool
 WORKDIR /languagetool
