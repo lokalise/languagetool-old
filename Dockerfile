@@ -1,5 +1,7 @@
 FROM debian:bullseye AS patch
 
+ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
+
 RUN mkdir -p /dist/Languagetool
 WORKDIR /dist/Languagetool
 
@@ -24,8 +26,6 @@ RUN apk add --no-cache \
 
 # https://github.com/Erikvl87/docker-languagetool/issues/60
 RUN ln -s /lib64/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2
-
-ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 
 RUN mkdir /languagetool
 WORKDIR /languagetool
