@@ -46,4 +46,3 @@ USER languagetool
 CMD [ "bash", "entrypoint.sh" ]
 
 EXPOSE 8010
-
