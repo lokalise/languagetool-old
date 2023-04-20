@@ -1,10 +1,14 @@
-FROM openjdk:11-jre-alpine
+FROM alpine:3.17.3
 
-RUN apk update \
-    && apk add \
-        bash \
-        libgomp \
-        gcompat
+RUN apk add --no-cache \
+    bash \
+    curl \
+    libc6-compat \
+    libstdc++ \
+    openjdk11-jre-headless
+
+# https://github.com/Erikvl87/docker-languagetool/issues/60
+RUN ln -s /lib64/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2
 
 ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 
@@ -14,6 +18,14 @@ WORKDIR /languagetool
 COPY languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}/LanguageTool-${LANGUAGETOOL_VERSION}/ .
 COPY entrypoint.sh .
 COPY server.properties .
+
+COPY build/arm64-workaround/bridj.sh arm64-workaround/bridj.sh
+RUN chmod +x arm64-workaround/bridj.sh
+RUN bash -c "arm64-workaround/bridj.sh"
+
+COPY build/arm64-workaround/hunspell.sh arm64-workaround/hunspell.sh
+RUN chmod +x arm64-workaround/hunspell.sh
+RUN bash -c "arm64-workaround/hunspell.sh"
 
 RUN addgroup -S languagetool && adduser -S languagetool -G languagetool
 RUN chown -R languagetool.languagetool .
