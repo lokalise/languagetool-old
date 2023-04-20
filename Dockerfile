@@ -1,6 +1,6 @@
 FROM debian:bullseye AS patch
 
-RUN mkdir /dist/Languagetool
+RUN mkdir -p /dist/Languagetool
 WORKDIR /dist/Languagetool
 
 COPY languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}/LanguageTool-${LANGUAGETOOL_VERSION}/ .
