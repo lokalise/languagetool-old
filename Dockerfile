@@ -5,10 +5,9 @@ ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 # Install tools required for the workaround scripts
 RUN apt-get update -y && apt-get install -y build-essential cmake git wget zip unzip maven mercurial texlive locales bash libgomp1 openjdk-11-jdk-headless git maven
 
-RUN mkdir -p /dist/Languagetool
-WORKDIR /dist/Languagetool
+RUN mkdir -p /dist/LanguageTool
 
-COPY languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}/LanguageTool-${LANGUAGETOOL_VERSION}/ .
+COPY languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}/LanguageTool-${LANGUAGETOOL_VERSION}/ /dist/LanguageTool/
 
 WORKDIR /
 COPY build/arm64-workaround/bridj.sh arm64-workaround/bridj.sh
@@ -34,7 +33,7 @@ RUN ln -s /lib64/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2
 RUN mkdir /languagetool
 WORKDIR /languagetool
 
-COPY --from=patch /dist/Languagetool .
+COPY --from=patch /dist/LanguageTool .
 COPY entrypoint.sh .
 COPY server.properties .
 
