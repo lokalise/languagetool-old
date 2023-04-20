@@ -3,13 +3,14 @@ FROM debian:bullseye AS patch
 ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 
 # Install tools required for the workaround scripts
-RUN apt-get update -y && apt-get install -y build-essential cmake git wget zip unzip maven mercurial texlive
+RUN apt-get update -y && apt-get install -y build-essential cmake git wget zip unzip maven mercurial texlive locales bash libgomp1 openjdk-11-jdk-headless git maven
 
 RUN mkdir -p /dist/Languagetool
 WORKDIR /dist/Languagetool
 
 COPY languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}/LanguageTool-${LANGUAGETOOL_VERSION}/ .
 
+WORKDIR /
 COPY build/arm64-workaround/bridj.sh arm64-workaround/bridj.sh
 RUN chmod +x arm64-workaround/bridj.sh
 RUN bash -c "arm64-workaround/bridj.sh"
