@@ -2,6 +2,9 @@ FROM debian:bullseye AS patch
 
 ARG LANGUAGETOOL_VERSION="6.1-SNAPSHOT"
 
+# Install tools required for the workaround scripts
+RUN apt-get update -y && apt-get install -y git wget zip unzip maven
+
 RUN mkdir -p /dist/Languagetool
 WORKDIR /dist/Languagetool
 
